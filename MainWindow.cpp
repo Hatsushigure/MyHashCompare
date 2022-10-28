@@ -1,3 +1,12 @@
+/**********************************************************************
+**
+** MainWindow.cpp
+** Copyright (C) 2022-2022 Hatsushigure
+**
+** The source file of MainWindow
+**
+**********************************************************************/
+
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 #include <QFileDialog>
