@@ -11,6 +11,7 @@
 #include "./ui_MainWindow.h"
 #include <QFileDialog>
 #include <QCryptographicHash>
+#include "MyHashCalcThread.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -49,7 +50,7 @@ void MainWindow::onOpenLeftFile()
 
 void MainWindow::onOpenRightFile()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "打开右侧文件", m_lastVisitedDir, "所有文件(*);;aaa(*.aaa)");
+	QString fileName = QFileDialog::getOpenFileName(this, "打开右侧文件", m_lastVisitedDir, "所有文件(*)");
 	if (!QFile::exists(fileName))
 		return;
 	m_rightFile.setFileName(fileName);
@@ -65,17 +66,11 @@ void MainWindow::onCalcHash()
 		qDebug() << "At least a file does not exist";
 		return;
 	}
-	m_leftFile.open(QFile::ReadOnly);
-	m_rightFile.open(QFile::ReadOnly);
-	QByteArray lSHA256 = QCryptographicHash::hash(m_leftFile.readAll(), QCryptographicHash::Sha256);
-	QByteArray rSHA256 = QCryptographicHash::hash(m_rightFile.readAll(), QCryptographicHash::Sha256);
-	m_leftFile.close();
-	m_rightFile.close();
-	ui->leftSHA256Edit->setText(lSHA256.toHex());
-	ui->rightSHA256Edit->setText(rSHA256.toHex());
-	if (lSHA256 == rSHA256)
-		ui->SHA256Status->setText("<span style=\"color:green;font-size:14pt;\">√</span>");
-	else
-		ui->SHA256Status->setText("<span style=\"color:red;font-size:14pt;\">×</span>");
+
+	MyHashCalcThread* calcThread;
+	calcThread = new MyHashCalcThread(QCryptographicHash::Sha256, m_leftFile.fileName(), this);
+
+	ui->SHA256Status->setText("<span style=\"color:green;font-size:14pt;\">√</span>");
+	ui->SHA256Status->setText("<span style=\"color:red;font-size:14pt;\">×</span>");
 }
 
