@@ -14,7 +14,6 @@
 #include <QApplication>
 
 class MainWindow;
-class MyHashCalculator;
 
 class MyHashCompare : public QApplication
 {
@@ -23,15 +22,9 @@ public:
 	//Global variants
 	static MyHashCompare* theApp;
 	static MainWindow* mainWindow;
-	static QThread* calcThread;
-	static MyHashCalculator* hashCalculator;
 public:
 	MyHashCompare(int argc, char *argv[]);
 	//Initialize mainWindow
 	void initMainWindow();
-	//Initialize the calculator thread
-	void initCalcThread();
-	//Initialize the calculator
-	void initCalculator();
 };
 

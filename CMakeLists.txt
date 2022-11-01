@@ -21,8 +21,6 @@ set(PROJECT_SOURCES
         MainWindow.ui
 	MyHashCompare.h
 	MyHashCompare.cpp
-	MyHashCalculator.h
-	MyHashCalculator.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
