@@ -30,7 +30,7 @@ void MyHashCalcThread::run()
 	QFile file(m_fileName);
 
 	//Check whether the file can be opened
-	if (!file.exists() || file.open(QFile::ReadOnly))
+	if (!file.exists() || !file.open(QFile::ReadOnly))
 	{
 		qDebug() << "The file to be hashed cannot be opened!";
 		hexRet.clear();
@@ -38,7 +38,8 @@ void MyHashCalcThread::run()
 	}
 
 	file.close();
-	m_hasher->addData(&file);
+	file.open(QFile::ReadOnly);
+	m_hasher->addData(file.readAll());
 	hexRet = m_hasher->result().toHex().toUpper();
 
 	emit resultReady(hexRet);

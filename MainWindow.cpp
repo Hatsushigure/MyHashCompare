@@ -12,6 +12,7 @@
 #include <QFileDialog>
 #include <QCryptographicHash>
 #include "MyHashCalcThread.h"
+#include "MyHashCompare.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -35,6 +36,8 @@ void MainWindow::initConnections()
 	connect(ui->actionOpenLeft, &QAction::triggered, this, &MainWindow::onOpenLeftFile);
 	connect(ui->actionOpenRight, &QAction::triggered, this, &MainWindow::onOpenRightFile);
 	connect(ui->actionCalc, &QAction::triggered, this, &MainWindow::onCalcHash);
+	connect(MyHashCompare::lMD5Thread, &MyHashCalcThread::resultReady, ui->leftMD5Edit, &QLineEdit::setText);
+	connect(MyHashCompare::rMD5Thread, &MyHashCalcThread::resultReady, ui->rightMDEdit, &QLineEdit::setText);
 }
 
 void MainWindow::onOpenLeftFile()
@@ -67,10 +70,11 @@ void MainWindow::onCalcHash()
 		return;
 	}
 
-	MyHashCalcThread* calcThread;
-	calcThread = new MyHashCalcThread(QCryptographicHash::Sha256, m_leftFile.fileName(), this);
+	MyHashCompare::lMD5Thread->setFileName(m_leftFile.fileName());
+	MyHashCompare::rMD5Thread->setFileName(m_rightFile.fileName());
+	qDebug() << m_leftFile.fileName();
 
-	ui->SHA256Status->setText("<span style=\"color:green;font-size:14pt;\">√</span>");
-	ui->SHA256Status->setText("<span style=\"color:red;font-size:14pt;\">×</span>");
+	MyHashCompare::lMD5Thread->start();
+	MyHashCompare::rMD5Thread->start();
 }
 

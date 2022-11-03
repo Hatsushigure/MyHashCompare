@@ -14,6 +14,7 @@
 #include <QApplication>
 
 class MainWindow;
+class MyHashCalcThread;
 
 class MyHashCompare : public QApplication
 {
@@ -22,8 +23,16 @@ public:
 	//Global variants
 	static MyHashCompare* theApp;
 	static MainWindow* mainWindow;
+	static MyHashCalcThread* lMD5Thread;
+	static MyHashCalcThread* rMD5Thread;
+	static MyHashCalcThread* lSHA1Thread;
+	static MyHashCalcThread* rSHA1Thread;
+	static MyHashCalcThread* lSHA256Thread;
+	static MyHashCalcThread* rSHA256Thread;
 public:
 	MyHashCompare(int argc, char *argv[]);
+	//Initialize all threads
+	void initThread();
 	//Initialize mainWindow
 	void initMainWindow();
 };

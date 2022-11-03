@@ -19,9 +19,10 @@ private:
 	QCryptographicHash* m_hasher;
 	QByteArray m_result;
 public:
-	MyHashCalcThread(QCryptographicHash::Algorithm algo, const QString& fileName, QObject *parent = nullptr);
+	MyHashCalcThread(QCryptographicHash::Algorithm algo, const QString& fileName = "", QObject *parent = nullptr);
 	~MyHashCalcThread();
 	QByteArray hexRet() const {return m_result;}
+	void setFileName(const QString& fileName) {m_fileName = fileName;}
 	//Overrides the run function
 	void run() override;
 signals:
