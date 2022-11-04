@@ -36,8 +36,13 @@ void MainWindow::initConnections()
 	connect(ui->actionOpenLeft, &QAction::triggered, this, &MainWindow::onOpenLeftFile);
 	connect(ui->actionOpenRight, &QAction::triggered, this, &MainWindow::onOpenRightFile);
 	connect(ui->actionCalc, &QAction::triggered, this, &MainWindow::onCalcHash);
+
 	connect(MyHashCompare::lMD5Thread, &MyHashCalcThread::resultReady, ui->leftMD5Edit, &QLineEdit::setText);
-	connect(MyHashCompare::rMD5Thread, &MyHashCalcThread::resultReady, ui->rightMDEdit, &QLineEdit::setText);
+	connect(MyHashCompare::rMD5Thread, &MyHashCalcThread::resultReady, ui->rightMD5Edit, &QLineEdit::setText);
+	connect(MyHashCompare::lSHA1Thread, &MyHashCalcThread::resultReady, ui->leftSHA1Edit, &QLineEdit::setText);
+	connect(MyHashCompare::rSHA1Thread, &MyHashCalcThread::resultReady, ui->rightSHA1Edit, &QLineEdit::setText);
+	connect(MyHashCompare::lSHA256Thread, &MyHashCalcThread::resultReady, ui->leftSHA256Edit, &QLineEdit::setText);
+	connect(MyHashCompare::rSHA256Thread, &MyHashCalcThread::resultReady, ui->rightSHA256Edit, &QLineEdit::setText);
 }
 
 void MainWindow::onOpenLeftFile()
@@ -70,11 +75,28 @@ void MainWindow::onCalcHash()
 		return;
 	}
 
-	MyHashCompare::lMD5Thread->setFileName(m_leftFile.fileName());
-	MyHashCompare::rMD5Thread->setFileName(m_rightFile.fileName());
-	qDebug() << m_leftFile.fileName();
+	if (ui->MD5Check->isChecked())
+	{
+		MyHashCompare::lMD5Thread->setFileName(m_leftFile.fileName());
+		MyHashCompare::rMD5Thread->setFileName(m_rightFile.fileName());
+		MyHashCompare::lMD5Thread->start();
+		MyHashCompare::rMD5Thread->start();
+	}
 
-	MyHashCompare::lMD5Thread->start();
-	MyHashCompare::rMD5Thread->start();
+	if (ui->SHA1Check->isChecked())
+	{
+		MyHashCompare::lSHA1Thread->setFileName(m_leftFile.fileName());
+		MyHashCompare::rSHA1Thread->setFileName(m_rightFile.fileName());
+		MyHashCompare::lSHA1Thread->start();
+		MyHashCompare::rSHA1Thread->start();
+	}
+
+	if (ui->SHA256Check->isChecked())
+	{
+		MyHashCompare::lSHA256Thread->setFileName(m_leftFile.fileName());
+		MyHashCompare::rSHA256Thread->setFileName(m_rightFile.fileName());
+		MyHashCompare::lSHA256Thread->start();
+		MyHashCompare::rSHA256Thread->start();
+	}
 }
 
