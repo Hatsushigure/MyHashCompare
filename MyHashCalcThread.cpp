@@ -41,6 +41,7 @@ void MyHashCalcThread::run()
 	file.open(QFile::ReadOnly);
 	m_hasher->addData(file.readAll());
 	hexRet = m_hasher->result().toHex().toUpper();
+	m_hasher->reset();
 
 	emit resultReady(hexRet);
 }
