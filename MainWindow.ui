@@ -25,7 +25,7 @@
        </widget>
       </item>
       <item row="2" column="2">
-       <widget class="QLineEdit" name="rightMDEdit"/>
+       <widget class="QLineEdit" name="rightMD5Edit"/>
       </item>
       <item row="4" column="0">
        <widget class="QCheckBox" name="SHA256Check">
