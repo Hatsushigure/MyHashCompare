@@ -17,6 +17,7 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
+	, m_calcState({true, true, true, true, true, true})
 {
 	ui->setupUi(this);
 
@@ -37,12 +38,36 @@ void MainWindow::initConnections()
 	connect(ui->actionOpenRight, &QAction::triggered, this, &MainWindow::onOpenRightFile);
 	connect(ui->actionCalc, &QAction::triggered, this, &MainWindow::onCalcHash);
 
-	connect(MyHashCompare::lMD5Thread, &MyHashCalcThread::resultReady, ui->leftMD5Edit, &QLineEdit::setText);
-	connect(MyHashCompare::rMD5Thread, &MyHashCalcThread::resultReady, ui->rightMD5Edit, &QLineEdit::setText);
-	connect(MyHashCompare::lSHA1Thread, &MyHashCalcThread::resultReady, ui->leftSHA1Edit, &QLineEdit::setText);
-	connect(MyHashCompare::rSHA1Thread, &MyHashCalcThread::resultReady, ui->rightSHA1Edit, &QLineEdit::setText);
-	connect(MyHashCompare::lSHA256Thread, &MyHashCalcThread::resultReady, ui->leftSHA256Edit, &QLineEdit::setText);
-	connect(MyHashCompare::rSHA256Thread, &MyHashCalcThread::resultReady, ui->rightSHA256Edit, &QLineEdit::setText);
+	connect(MyHashCompare::lMD5Thread, &MyHashCalcThread::resultReady, this, [&](const QByteArray& btArr) {
+		ui->leftMD5Edit->setText(btArr);
+		m_calcState[lMD5] = true;
+		onCalcFinished();
+	});
+	connect(MyHashCompare::rMD5Thread, &MyHashCalcThread::resultReady, this, [&](const QByteArray& btArr) {
+		ui->rightMD5Edit->setText(btArr);
+		m_calcState[rMD5] = true;
+		onCalcFinished();
+	});
+	connect(MyHashCompare::lSHA1Thread, &MyHashCalcThread::resultReady, this, [&](const QByteArray& btArr) {
+		ui->leftSHA1Edit->setText(btArr);
+		m_calcState[lSHA1] = true;
+		onCalcFinished();
+	});
+	connect(MyHashCompare::rSHA1Thread, &MyHashCalcThread::resultReady, this, [&](const QByteArray& btArr) {
+		ui->rightSHA1Edit->setText(btArr);
+		m_calcState[rSHA1] = true;
+		onCalcFinished();
+	});
+	connect(MyHashCompare::lSHA256Thread, &MyHashCalcThread::resultReady, this, [&](const QByteArray& btArr) {
+		ui->leftSHA256Edit->setText(btArr);
+		m_calcState[lSHA256] = true;
+		onCalcFinished();
+	});
+	connect(MyHashCompare::rSHA256Thread, &MyHashCalcThread::resultReady, this, [&](const QByteArray& btArr) {
+		ui->rightSHA256Edit->setText(btArr);
+		m_calcState[rSHA256] = true;
+		onCalcFinished();
+	});
 }
 
 void MainWindow::onOpenLeftFile()
@@ -75,6 +100,12 @@ void MainWindow::onCalcHash()
 		return;
 	}
 
+	ui->calcBtn->setDisabled(true);
+	ui->actionCalc->setDisabled(true);
+
+	for (auto& i : m_calcState)
+		i = false;
+
 	if (ui->MD5Check->isChecked())
 	{
 		MyHashCompare::lMD5Thread->setFileName(m_leftFile.fileName());
@@ -98,5 +129,15 @@ void MainWindow::onCalcHash()
 		MyHashCompare::lSHA256Thread->start();
 		MyHashCompare::rSHA256Thread->start();
 	}
+}
+
+void MainWindow::onCalcFinished()
+{
+	for (auto i : m_calcState)
+		if (!i)
+			return;
+
+	ui->actionCalc->setDisabled(false);
+	ui->calcBtn->setDisabled(false);
 }
 
